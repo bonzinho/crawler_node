@@ -13,6 +13,7 @@
     "mongoose": "^5.0.6",
     "node-horseman": "^3.3.0",
     "phantomjs": "^2.1.7",
+    "request": "^2.83.0",
     "tesseract.js": "^1.0.10"
   }
 }

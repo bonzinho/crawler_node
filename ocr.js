@@ -1,11 +1,11 @@
 const Tesseract = require('tesseract.js');
-const filename = './img/img.png';
+const filename = './img/img2.png';
 
 
 Tesseract
     .recognize(filename)
-    .progress( (p) => {
-        console.log(`Progress => ${p}`)
+    .progress( (progress) => {
+        console.log(`Progress => ${progress}`)
     })
     .then((result) => {
         console.log(result);

@@ -32,49 +32,64 @@ server.route({
     path: '/movies',
     handler: (req, reply) => {
         console.time();
-
         Movies.find({}, (err, results) => {
-         if(!err && results.length){
-             console.timeEnd(); // verificar performance
-             return reply({
-                 data: results,
-                 count: results.length,
-             });
-         }
+            if (!err && results.length) {
+                console.timeEnd();
+                return reply({
+                    data: results,
+                });
+            }
+            // Movies.count({}, (err, count) => {
+            //     if (!err && count > 0) {
+            //         return reply(count);
+            //     }
 
-            if(results.length && !err){
-             console.time();
-                return  horseman
+            if (!err && !results.length) {
+                console.time();
+                return horseman
                     .open('http://www.listchallenges.com/disney-movies')
-                    .evaluate(function(){ //captura os dados dentro da pagina solicitada
-                        var $;
-                        $ = window.$ || window.JQuery; //atualizar o jquery par apoder usar
+                    .evaluate(function() {
+                        $ = window.$ || window.jQuery;
 
                         var movies = [];
+                        // var skeleton = {
+                        //     name: '',
+                        //     year: ''
+                        // };
 
-                        $('.item-name').each(function(index, el){
-                            console.log(el);
-                            var name = $(el).text().trim();
+                        $('.item-name').each(function(index, el) {
+                            var name = $(el).text();
                             var year = name.match(/\(([^)]+)\)/);
-                            if(!year){
-                                return
+
+                            if (!year) {
+                                return;
                             }
 
                             year = year[1];
                             name = name.replace(/\s*\(.*?\)\s*/g, '');
 
+                            // skeleton.name = name;
+                            // skeleton.year = year;
+
+                            // movies.push(skeleton);
+                            // skeleton = {
+                            //     name: '',
+                            //     year: ''
+                            // };
+
                             movies.push({
                                 name: name,
-                                year: year,
+                                year: year
                             });
                         });
+
                         return movies;
                     })
-                    .then(function(res){
+                    .then(function(res) {
                         Movies.insertMany(res)
                             .then((movies) => {
                                 console.log(`Ok`);
-                                console.timeEnd(); // verificar performance
+                                console.timeEnd();
                                 return reply(res);
                             })
                             .catch((err) => {
@@ -84,11 +99,12 @@ server.route({
                                 });
                             });
                     })
-                    .catch(function(err){
-                        return `Erro ${err}`;
-                    }).close();
+                    .catch(function(err) {
+                        console.log(err)
+                    })
+                    .close();
             }
-        });
+        })
     }
 });
 
